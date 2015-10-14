@@ -6,6 +6,25 @@
 
 #include <CL/cl.h>
 
+#define DIVUP(A, B) (((A) + (B) - 1) / (B))
+
+#define CL_INT_CHECK(err) do {                                                          \
+        if (err != CL_SUCCESS) {                                                        \
+            std::cout << "OpenCL error (" << err << ", " << oclErrorCode(err) << ")" << \
+            " in file:line " << __FILE__ << ":" << __LINE__ << std::endl;               \
+            return -1;                                                                  \
+        }                                                                               \
+    } while(0)
+
+#define CL_CHECK(fn) do {                                                               \
+        cl_int err = fn;                                                                \
+        if (err != CL_SUCCESS) {                                                        \
+            std::cout << "OpenCL error (" << err << ", " << oclErrorCode(err) << ")" << \
+            " in file:line " << __FILE__ << ":" << __LINE__ << std::endl;               \
+            return -1;                                                                  \
+        }                                                                               \
+    } while(0)
+
 struct oclHardware {
     cl_platform_id mPlatform;
     cl_context mContext;
