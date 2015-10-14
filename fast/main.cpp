@@ -121,9 +121,9 @@ static int runOpenCL(std::string imgFile, std::string kernelFile, cl_device_type
     cl_int err = 0;
 
     cl_mem d_img = clCreateBuffer(hardware.mContext, CL_MEM_READ_ONLY, img_el * sizeof(int), NULL, &err);
-    CL_INT_CHECK(err);
+    CL_CHECK(err);
     cl_mem d_score = clCreateBuffer(hardware.mContext, CL_MEM_READ_WRITE, img_el * sizeof(int), NULL, &err);
-    CL_INT_CHECK(err);
+    CL_CHECK(err);
 
     CL_CHECK(clEnqueueWriteBuffer(hardware.mQueue, d_img, CL_TRUE, 0,
                                   img_el * sizeof(int), h_img, 0, 0, 0));

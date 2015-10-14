@@ -8,21 +8,13 @@
 
 #define DIVUP(A, B) (((A) + (B) - 1) / (B))
 
-#define CL_INT_CHECK(err) do {                                                          \
-        if (err != CL_SUCCESS) {                                                        \
-            std::cout << "OpenCL error (" << err << ", " << oclErrorCode(err) << ")" << \
-            " in file:line " << __FILE__ << ":" << __LINE__ << std::endl;               \
-            return -1;                                                                  \
-        }                                                                               \
-    } while(0)
-
-#define CL_CHECK(fn) do {                                                               \
-        cl_int err = fn;                                                                \
-        if (err != CL_SUCCESS) {                                                        \
-            std::cout << "OpenCL error (" << err << ", " << oclErrorCode(err) << ")" << \
-            " in file:line " << __FILE__ << ":" << __LINE__ << std::endl;               \
-            return -1;                                                                  \
-        }                                                                               \
+#define CL_CHECK(fn) do {                                                                   \
+        cl_int _err = fn;                                                                   \
+        if (_err != CL_SUCCESS) {                                                           \
+            std::cout << "OpenCL error (" << _err << ", " << oclErrorCode(_err) << ")" <<   \
+            " in file:line " << __FILE__ << ":" << __LINE__ << std::endl;                   \
+            return -1;                                                                      \
+        }                                                                                   \
     } while(0)
 
 struct oclHardware {
