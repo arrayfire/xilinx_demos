@@ -13,8 +13,8 @@
 #include "oclHelper.h"
 #include "pgm.h"
 
-const int FAST_THREADS_X = 16;
-const int FAST_THREADS_Y = 16;
+const int FAST_THREADS_X = 1;
+const int FAST_THREADS_Y = 1;
 const int FAST_THREADS_NONMAX_X = 32;
 const int FAST_THREADS_NONMAX_Y = 8;
 
@@ -96,7 +96,7 @@ int runTest(std::string imgFile, std::vector<int> fpgaX, std::vector<int> fpgaY,
 }
 
 static int runOpenCL(std::string imgFile, std::string kernelFile, cl_device_type deviceType,
-                     int iteration, int fast_thr, bool verbose, double delay)
+                     int iteration, int fast_thr, bool verbose, double &delay)
 {
     oclHardware hardware = getOclHardware(deviceType);
     if (!hardware.mQueue) {
@@ -131,20 +131,16 @@ static int runOpenCL(std::string imgFile, std::string kernelFile, cl_device_type
     int arg = 0;
 
     const unsigned edge = 3;
-    const unsigned local_el = (FAST_THREADS_X + edge*2) * (FAST_THREADS_Y + edge*2);
     CL_CHECK(clSetKernelArg(software.mKernel, arg++, sizeof(cl_mem), &d_img));
     CL_CHECK(clSetKernelArg(software.mKernel, arg++, sizeof(int), &wi));
     CL_CHECK(clSetKernelArg(software.mKernel, arg++, sizeof(int), &hi));
     CL_CHECK(clSetKernelArg(software.mKernel, arg++, sizeof(cl_mem), &d_score));
     CL_CHECK(clSetKernelArg(software.mKernel, arg++, sizeof(int), &fast_thr));
     CL_CHECK(clSetKernelArg(software.mKernel, arg++, sizeof(unsigned), &edge));
-    CL_CHECK(clSetKernelArg(software.mKernel, arg++, local_el * sizeof(int), NULL));
 
     size_t localSize[2] = { FAST_THREADS_X, FAST_THREADS_Y };
 
-    unsigned groups_x = DIVUP(w, localSize[0]);
-    unsigned groups_y = DIVUP(h, localSize[1]);
-    size_t globalSize[2] = { localSize[0] * groups_x, localSize[1] * groups_y };
+    size_t globalSize[2] = { 1, 1 };
 
     if (verbose) {
         std::cout << "Global size = (" << globalSize[0] << "," << globalSize[1] << ",1)" << std::endl;
@@ -260,9 +256,10 @@ int main(int argc, char** argv)
     if ((deviceType != CL_DEVICE_TYPE_DEFAULT) && runOpenCL(imgFile, kernelFile, deviceType,
                                                             iteration, fast_thr, verbose, delay)) {
         std::cout << "FAILED TEST\n";
+        std::cout << "OpenCL total time: " << delay << " sec\n";
+        std::cout << "OpenCL average time per iteration: " << delay/iteration << " sec\n";
         return 1;
     }
-    //runOpenCL(imgFile, kernelFile, deviceType, iteration, fast_thr, verbose, delay);
 
     std::cout << "OpenCL total time: " << delay << " sec\n";
     std::cout << "OpenCL average time per iteration: " << delay/iteration << " sec\n";
