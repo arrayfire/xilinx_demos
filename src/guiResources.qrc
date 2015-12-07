@@ -1,0 +1,7 @@
+<RCC>
+  <qresource prefix="/">
+    <file>resources/All_Programmable_Lock_up.jpg</file>
+    <file>resources/sdaccel.jpg</file>
+    <file>resources/af_logo.png</file>
+  </qresource>
+</RCC>
