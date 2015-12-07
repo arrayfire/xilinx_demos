@@ -23,18 +23,18 @@ set_property file_type "c header files" [get_files "pgm.h"]
 
 # Kernel definition
 create_kernel locate_features -type clc
-add_files -kernel [get_kernels locate_features] "fast_pipeline.cl"
+add_files -kernel [get_kernels locate_features] "fast_pipeline_nonmax.cl"
 
 # Define binary containers
-create_opencl_binary fast
-set_property region "OCL_REGION_0" [get_opencl_binary fast]
-create_compute_unit -opencl_binary [get_opencl_binary fast] -kernel [get_kernels locate_features] -name K1
+create_opencl_binary fast_pipeline_nonmax
+set_property region "OCL_REGION_0" [get_opencl_binary fast_pipeline_nonmax]
+create_compute_unit -opencl_binary [get_opencl_binary fast_pipeline_nonmax] -kernel [get_kernels locate_features] -name K1
 
 # Compile the design for CPU based emulation
-compile_emulation -flow cpu -opencl_binary [get_opencl_binary fast]
+compile_emulation -flow cpu -opencl_binary [get_opencl_binary fast_pipeline_nonmax]
 
 # Generate the system estimate report
 report_estimate
 
 # Run the design in CPU emulation mode
-run_emulation -flow cpu -args "-d acc -k fast.xclbin -f ../../../../data/square.pgm"
+run_emulation -flow cpu -args "-d acc -k fast_pipeline_nonmax.xclbin -f ../../../../data/square.pgm"
